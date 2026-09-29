@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <base target="_top">
+    <style>
+      :root { --ink:#111111;--muted:#6b6b6b;--paper:#f4f4f4;--surface:#ffffff;--line:#dddddd;--accent:#1a1a1a;--accent-dark:#000000;--lime:#e6e6e6;--soft:#ededed;--shadow:0 16px 40px rgba(0,0,0,.10); }
+      * { box-sizing:border-box; } body { margin:0; min-width:320px; color:var(--ink); background:var(--paper); font:15px/1.4 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+      button,input { font:inherit; } button { cursor:pointer; } .shell { max-width:1440px;margin:auto;padding:28px 28px 48px; }
+      header { display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin-bottom:26px; } .eyebrow { margin:0 0 8px;color:var(--accent);font-size:.73rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase; }
+      h1 { margin:0;font-size:clamp(2rem,4vw,3.35rem);line-height:.98;letter-spacing:-.065em; } .intro { max-width:460px;margin:14px 0 0;color:var(--muted);font-size:1rem; }
+      .header-actions { display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end; }.button { border:0;border-radius:10px;padding:11px 15px;font-weight:750;transition:.18s transform,.18s background; }.button:hover { transform:translateY(-1px); }.button.primary { color:#fff;background:var(--accent-dark); }.button.ghost { color:var(--accent-dark);background:var(--soft); }
+      .summary { display:grid;grid-template-columns:1.5fr repeat(3,1fr);border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--surface);box-shadow:var(--shadow); } .summary-item { min-height:88px;padding:18px 21px;border-left:1px solid var(--line); }.summary-item:first-child { border-left:0;background:var(--accent-dark);color:white; }.summary-label { display:block;font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;opacity:.72; }.summary-value { display:block;margin-top:5px;font-size:1.45rem;font-weight:800;letter-spacing:-.04em; }
+      .week-nav { display:flex;gap:8px;margin:27px 0 14px;overflow:auto;padding-bottom:4px; }.day-tab { min-width:142px;border:1px solid var(--line);border-radius:11px;padding:11px 13px;text-align:left;color:var(--muted);background:var(--surface); }.day-tab strong { display:block;color:var(--ink);font-size:.92rem; }.day-tab small { font-size:.75rem; }.day-tab.active { border-color:var(--accent-dark);color:white;background:var(--accent-dark); }.day-tab.active strong { color:white; }
+      .plan { border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--surface);box-shadow:var(--shadow); }.plan-heading { display:flex;justify-content:space-between;gap:16px;align-items:center;padding:19px 21px;border-bottom:1px solid var(--line); }.plan-heading h2 { margin:0;font-size:1.25rem;letter-spacing:-.035em; }.plan-heading p { margin:3px 0 0;color:var(--muted);font-size:.86rem; }.day-description { width:min(460px,100%);margin-left:-8px;border:1px solid transparent;border-radius:6px;padding:5px 8px;color:var(--muted);background:transparent;font-size:.86rem; }.day-description:hover,.day-description:focus { border-color:#bbbbbb;background:white;color:var(--ink);outline:0; }#day-note { display:block;font-size:.8rem; }#day-note:empty { display:none; }.plan-actions { display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end; }.copy-day { border:1px solid var(--line);border-radius:8px;padding:8px 10px;color:var(--accent-dark);background:var(--surface);font-weight:650; }.add { flex:0 0 auto;border:1px solid #bbbbbb;border-radius:8px;padding:8px 11px;color:var(--accent-dark);background:#f7f7f7;font-weight:750; }
+      .table-wrap { overflow-x:auto; }.workout-table { width:100%;border-collapse:collapse;min-width:850px;table-layout:fixed; }.workout-table th { padding:12px 14px;color:var(--muted);background:#f9f9f9;font-size:.69rem;font-weight:800;letter-spacing:.08em;text-align:left;text-transform:uppercase; }.workout-table td { padding:10px 14px;border-top:1px solid var(--line);vertical-align:middle; }.workout-table tr:hover td { background:#fafafa; }.num { width:56px;color:#9a9a9a;font-weight:750; }.exercise { width:39%; }.metric { width:10%; }.note { width:19%; }.gif-col { width:76px;text-align:center; }
+      .exercise-button { display:flex;align-items:center;gap:11px;width:100%;border:0;padding:0;text-align:left;color:var(--ink);background:transparent; }.exercise-thumb,.gif-placeholder { width:48px;height:40px;flex:0 0 auto;border-radius:6px;object-fit:cover;background:#ececec; }.exercise-thumb { border:1px solid #d6d6d6; }.exercise-name { display:block;font-weight:760;line-height:1.2; }.exercise-group { display:block;margin-top:3px;color:var(--muted);font-size:.74rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }.entry { width:100%;border:1px solid transparent;border-radius:6px;padding:7px 8px;color:var(--ink);background:transparent; }.entry:hover,.entry:focus { border-color:#bbbbbb;background:white;outline:0; }.gif-button { border:0;border-radius:7px;padding:3px;background:transparent; }.gif-button:hover { background:var(--soft); }.gif-button img { display:block;width:46px;height:37px;border-radius:5px;object-fit:cover;background:#ececec; }.empty-gif { color:var(--muted);font-size:.72rem; }
+      .footer-note { margin:15px 2px 0;color:var(--muted);font-size:.8rem; } dialog { width:min(700px,calc(100% - 28px));max-height:min(760px,calc(100% - 28px));border:0;border-radius:16px;padding:0;color:var(--ink);background:var(--surface);box-shadow:0 24px 70px rgba(0,0,0,.28); } dialog::backdrop { background:rgba(0,0,0,.54);backdrop-filter:blur(3px); }.modal-head { display:flex;align-items:center;justify-content:space-between;gap:15px;padding:19px;border-bottom:1px solid var(--line); }.modal-head h2 { margin:0;font-size:1.2rem; }.close { border:0;border-radius:7px;padding:7px 10px;color:var(--muted);background:#efefef;font-size:1.1rem; }.picker-search { width:calc(100% - 38px);margin:15px 19px;border:1px solid var(--line);border-radius:9px;padding:11px 12px;outline-color:var(--accent); }.picker-list { max-height:500px;overflow:auto;padding:0 10px 12px; }.picker-item { display:flex;align-items:center;gap:12px;width:100%;border:0;border-radius:9px;padding:9px;text-align:left;color:var(--ink);background:transparent; }.picker-item:hover { background:var(--soft); }.picker-item img { width:64px;height:47px;border-radius:6px;object-fit:cover;background:#ececec; }.picker-item strong,.picker-item small { display:block; }.picker-item small { color:var(--muted);margin-top:2px; }.preview { padding:18px; }.preview img { display:block;max-width:100%;max-height:65vh;margin:auto;border-radius:10px;background:#111; }
+      .view { display:none; }.view.active { display:block; }.view-switch { display:flex;gap:5px;padding:4px;border-radius:11px;background:var(--soft); }.view-switch button { border:0;border-radius:8px;padding:8px 12px;color:var(--accent-dark);background:transparent;font-weight:750; }.view-switch button.active { color:white;background:var(--accent-dark); }.library-head { display:flex;justify-content:space-between;align-items:end;gap:20px;margin:12px 0 18px; }.library-head h2 { margin:0;font-size:1.65rem;letter-spacing:-.05em; }.library-head p { margin:4px 0 0;color:var(--muted); }.catalog-controls { display:flex;gap:10px;align-items:center; }.catalog-controls input,.catalog-controls select { border:1px solid var(--line);border-radius:9px;padding:11px 12px;color:var(--ink);background:var(--surface);outline-color:var(--accent); }.catalog-controls input { width:min(420px,52vw); }.catalog-controls select { max-width:220px; }.catalog-status { margin:0 0 13px;color:var(--muted);font-size:.86rem; }.catalog-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px; }.catalog-card { overflow:hidden;border:1px solid var(--line);border-radius:12px;text-align:left;color:var(--ink);background:var(--surface);box-shadow:0 5px 16px rgba(0,0,0,.05); }.catalog-card:hover { border-color:#888888;transform:translateY(-2px); }.catalog-card img { display:block;width:100%;height:155px;object-fit:contain;background:#111; }.catalog-card span { display:block;padding:10px 11px 2px;font-weight:760;line-height:1.2; }.catalog-card small { display:block;padding:0 11px 11px;color:var(--muted);font-size:.74rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }.catalog-empty { grid-column:1/-1;padding:42px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px; }
+      .topbar { display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px;padding-bottom:14px;border-bottom:1px solid var(--line); }.brand { font-weight:800;letter-spacing:-.02em; }.account { display:flex;align-items:center;gap:9px;min-height:40px; }.account-name { max-width:150px;color:var(--muted);font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }.sign-out { border:0;border-radius:8px;padding:8px 10px;color:var(--accent-dark);background:var(--soft);font-weight:700; }.workout-bar { display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px; }.workout-bar label { color:var(--muted);font-size:.82rem;font-weight:750; }.workout-select { margin-left:7px;border:1px solid var(--line);border-radius:8px;padding:9px;background:var(--surface);color:var(--ink); }.workout-actions { display:flex;gap:8px;flex-wrap:wrap; }.delete-workout { color:#b00020;border-color:#e3b5bd;background:#fff; }.new-workout { border:1px solid #bbbbbb;border-radius:8px;padding:9px 11px;color:var(--accent-dark);background:#f7f7f7;font-weight:750; }
+      @media (max-width:760px) { .shell { padding:20px 16px 34px; } header { display:block; }.header-actions { margin-top:18px;justify-content:flex-start; }.summary { grid-template-columns:1fr 1fr; }.summary-item:first-child { grid-column:1/-1; }.summary-item:nth-child(3) { border-left:0; }.summary-item { min-height:72px;padding:14px; }.week-nav { margin-top:21px; }.day-tab { min-width:126px; }.plan-heading { padding:16px;flex-wrap:wrap; }.plan-actions { justify-content:flex-start; }.library-head { display:block; }.catalog-controls { margin-top:15px;flex-direction:column;align-items:stretch; }.catalog-controls input,.catalog-controls select { width:100%;max-width:none; } }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <div class="topbar"><span class="brand">Biblioteca de Treinos</span><div class="account"><span class="account-name" id="account-name" hidden></span><button class="button primary" id="open-auth">Entrar</button><button class="sign-out" id="sign-out" hidden>Sair</button></div></div>
+      <header>
+        <div><p class="eyebrow">Treinos em movimento</p><h1>Seu treino,<br>organizado.</h1><p class="intro">Treine cada grupo muscular duas vezes na semana e explore os exercícios com demonstrações em GIF.</p></div>
+        <div class="header-actions"><div class="view-switch" aria-label="Visualização"><button data-view="planner" hidden>Minha semana</button><button class="active" data-view="library">Biblioteca</button></div><button class="button ghost" id="reset">Restaurar modelo</button><button class="button primary" id="print-day" onclick="window.print()">Imprimir dia</button></div>
+      </header>
+      <section class="view" id="planner-view">
+      <div class="workout-bar"><div><label for="workout-select">Treino ativo</label><select class="workout-select" id="workout-select" disabled><option>Entre para ver seus treinos</option></select></div><div class="workout-actions"><button class="new-workout delete-workout" id="delete-workout" disabled>Excluir treino</button><button class="new-workout" id="new-workout" disabled>+ Novo treino</button></div></div>
+      <section class="summary" aria-label="Resumo da semana"><div class="summary-item"><span class="summary-label">Ciclo atual</span><strong class="summary-value">Superior / inferior</strong></div><div class="summary-item"><span class="summary-label">Dias ativos</span><strong class="summary-value" id="active-days">—</strong></div><div class="summary-item"><span class="summary-label">Exercícios</span><strong class="summary-value" id="exercise-count">—</strong></div><div class="summary-item"><span class="summary-label">Status</span><strong class="summary-value" id="save-status">Carregando…</strong></div></section>
+      <nav class="week-nav" id="week-nav" aria-label="Dias de treino"></nav>
+      <main class="plan"><div class="plan-heading"><div><h2 id="day-title">Carregando ficha…</h2><p id="day-subtitle"><input class="day-description" id="day-description" maxlength="120" placeholder="Descreva o foco deste dia" aria-label="Descrição do dia"><span id="day-note"></span></p></div><div class="plan-actions"><select class="copy-day" id="copy-day" aria-label="Copiar treino de outro dia"></select><button class="add" id="add-row">+ Adicionar exercício</button></div></div><div class="table-wrap"><table class="workout-table"><thead><tr><th class="num">#</th><th class="exercise">Exercício</th><th class="metric">Séries</th><th class="metric">Reps.</th><th class="metric">Carga</th><th class="metric">Descanso</th><th class="note">Observações</th><th class="gif-col">GIF</th></tr></thead><tbody id="workout-body"></tbody></table></div></main>
+      <p class="footer-note">Clique no nome do exercício para trocar o movimento. Os campos da ficha podem ser preenchidos livremente e são salvos na sua conta.</p>
+      </section>
+      <section class="view active" id="library-view">
+        <div class="library-head"><div><h2>Biblioteca de exercícios</h2><p>Pesquise movimentos, filtre por grupo muscular e assista ao GIF.</p></div><div class="catalog-controls"><input id="catalog-search" type="search" placeholder="Ex.: supino, remada, bíceps…"><select id="catalog-group"><option value="">Todos os grupos</option></select></div></div>
+        <p class="catalog-status" id="catalog-status">Carregando exercícios…</p><div class="catalog-grid" id="catalog-grid"></div>
+      </section>
+    </div>
+    <dialog id="picker"><div class="modal-head"><h2>Escolher exercício</h2><button class="close" data-close="picker" aria-label="Fechar">×</button></div><input class="picker-search" id="picker-search" type="search" placeholder="Buscar por exercício ou grupo muscular" autofocus><div class="picker-list" id="picker-list"></div></dialog>
+    <dialog id="preview"><div class="modal-head"><h2 id="preview-title">Execução do exercício</h2><button class="close" data-close="preview" aria-label="Fechar">×</button></div><div class="preview" id="preview-content"></div></dialog>
+    <dialog id="auth-dialog"><div class="modal-head"><h2 id="auth-title">Entrar</h2><button class="close" data-close="auth-dialog" aria-label="Fechar">×</button></div><form class="preview" id="auth-form"><div id="auth-name-wrap"><label>Nome<br><input class="picker-search" id="auth-name" style="width:100%;margin:6px 0 12px" autocomplete="name"></label></div><label>E-mail<br><input class="picker-search" id="auth-email" type="email" style="width:100%;margin:6px 0 12px" autocomplete="email" required></label><label>Senha<br><input class="picker-search" id="auth-password" type="password" style="width:100%;margin:6px 0 12px" minlength="6" autocomplete="current-password" required></label><div id="auth-invite-wrap"><label>Código de convite<br><input class="picker-search" id="auth-invite" style="width:100%;margin:6px 0 12px" autocomplete="off"></label></div><p class="footer-note" id="auth-message"></p><button class="button primary" type="submit" id="auth-submit">Entrar</button><button class="button ghost" type="button" id="auth-toggle">Criar conta</button></form></dialog>
+    <script>
+      const STORAGE_KEY = 'ficha-semanal-superior-inferior-v2';
+      const DAYS = [
+        { name:'Segunda', focus:'Superior A · peito, costas, ombros e braços' },
+        { name:'Terça', focus:'Inferior A · quadríceps, posteriores e panturrilhas' },
+        { name:'Quarta', focus:'' },
+        { name:'Quinta', focus:'Superior B · peito, costas, ombros e braços' },
+        { name:'Sexta', focus:'Inferior B · quadríceps, posteriores e glúteos' },
+        { name:'Sábado', focus:'' }
+      ];
+      const DEFAULT_EXERCISES = [
+        [
+          { queries:[['supino','reto','maquina'], ['supino','horizontal','maquina'], ['supino','reto']], sets:'3', reps:'8–12', rest:'90 s' },
+          { queries:[['remada','baixa','polia'], ['remada','baixa','cabo'], ['remada','maquina'], ['remada']], sets:'3', reps:'8–12', rest:'90 s' },
+          { queries:[['desenvolvimento','maquina'], ['desenvolvimento','halteres'], ['desenvolvimento']], sets:'3', reps:'8–12', rest:'75 s' },
+          { queries:[['puxada','frente'], ['pulley','frente'], ['puxada','maquina']], sets:'3', reps:'8–12', rest:'90 s' },
+          { queries:[['rosca','halteres'], ['rosca','biceps'], ['rosca']], sets:'2', reps:'10–15', rest:'60 s' },
+          { queries:[['triceps','corda'], ['triceps','pulley'], ['triceps']], sets:'2', reps:'10–15', rest:'60 s' }
+        ],
+        [
+          { queries:[['agachamento','livre'], ['agachamento','halteres'], ['agachamento'], ['leg','press']], sets:'3', reps:'8–12', rest:'90 s' },
+          { queries:[['levantamento','romeno'], ['stiff'], ['levantamento','terra']], sets:'3', reps:'8–12', rest:'90 s' },
+          { queries:[['leg','press'], ['press','pernas']], sets:'3', reps:'10–15', rest:'90 s' },
+          { queries:[['mesa','flexora'], ['flexora','maquina'], ['cadeira','flexora']], sets:'2', reps:'10–15', rest:'60 s' },
+          { queries:[['panturrilha','maquina'], ['panturrilha','sentado'], ['panturrilha']], sets:'3', reps:'12–20', rest:'60 s' },
+          { queries:[['abdominal','maquina'], ['abdominal'], ['prancha']], sets:'2', reps:'10–15', rest:'60 s' }
+        ],
+        [],
+        [
+          { queries:[['supino','inclinado'], ['supino','halteres'], ['supino']], sets:'3', reps:'8–12', rest:'90 s' },
+          { queries:[['remada','unilateral'], ['remada','halteres'], ['remada']], sets:'3', reps:'8–12', rest:'90 s' },
+          { queries:[['elevacao','lateral'], ['elevação','lateral'], ['lateral','ombro']], sets:'3', reps:'12–15', rest:'60 s' },
+          { queries:[['puxada','neutra'], ['puxada','frente'], ['pulley','frente'], ['puxada']], sets:'3', reps:'8–12', rest:'90 s' },
+          { queries:[['rosca','martelo'], ['rosca','halteres'], ['rosca']], sets:'2', reps:'10–15', rest:'60 s' },
+          { queries:[['triceps','frances'], ['triceps','cabo'], ['triceps']], sets:'2', reps:'10–15', rest:'60 s' }
+        ],
+        [
+          { queries:[['cadeira','extensora'], ['extensora']], sets:'3', reps:'10–15', rest:'60 s' },
+          { queries:[['mesa','flexora'], ['flexora','maquina'], ['cadeira','flexora']], sets:'3', reps:'10–15', rest:'60 s' },
+          { queries:[['afundo'], ['passada'], ['agachamento','halteres'], ['agachamento']], sets:'3', reps:'8–12', rest:'90 s' },
+          { queries:[['elevacao','pelvica'], ['elevação','pélvica'], ['hip','thrust'], ['gluteo']], sets:'3', reps:'8–12', rest:'90 s' },
+          { queries:[['panturrilha','maquina'], ['panturrilha','sentado'], ['panturrilha']], sets:'3', reps:'12–20', rest:'60 s' },
+          { queries:[['prancha'], ['abdominal']], sets:'2', reps:'10–15', rest:'60 s' }
+        ],
+        []
+      ];
+      let catalog = [], plan = [], descriptions = DAYS.map((day) => day.focus), activeDay = 0, selectedRow = null, saveTimer = null, sessionToken = '', currentWorkoutId = '', workouts = [], authIsRegister = false;
+      const $ = (selector) => document.querySelector(selector);
+      const normalize = (value = '') => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+      const blankRow = () => ({ exercise:null, sets:'3', reps:'10–12', load:'', rest:'60 s', notes:'' });
+
+      function findDefaultExercise(queries) {
+        return queries.map((terms) => catalog.find((item) => {
+          const description = normalize(item.name + ' ' + item.group + ' ' + item.folder);
+          return terms.every((term) => description.includes(normalize(term)));
+        })).find(Boolean) || null;
+      }
+      function makePlan() {
+        return DEFAULT_EXERCISES.map((day) => day.map(({ queries, ...definition }) => ({
+          ...blankRow(), ...definition, exercise:findDefaultExercise(queries)
+        })));
+      }
+      function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(plan)); updateCount(); scheduleSheetSave(); }
+      function updateCount() { $('#exercise-count').textContent = plan.flat().filter((row) => row.exercise).length + ' exercícios'; const active = plan.filter((day) => day.some((row) => row.exercise)).length; $('#active-days').textContent = active + (active === 1 ? ' dia' : ' dias'); }
+      function scheduleSheetSave() {
+        if (!sessionToken || !currentWorkoutId) { $('#save-status').textContent = 'Entre para salvar'; return; }
+        clearTimeout(saveTimer); $('#save-status').textContent = 'Salvando…';
+        saveTimer = setTimeout(() => google.script.run.withSuccessHandler(() => { $('#save-status').textContent = 'Salvo no Sheets'; }).withFailureHandler((error) => { $('#save-status').textContent = 'Erro ao salvar'; console.error(error); }).saveMyWorkoutPlan(sessionToken, currentWorkoutId, plan, descriptions), 900);
+      }
+      function planFromSheet(savedPlan) {
+        return savedPlan.map((day) => day.map((row) => ({ ...blankRow(), sets:row.sets, reps:row.reps, load:row.load, rest:row.rest, notes:row.notes, exercise:catalog.find((item) => item.id === row.exerciseId) || null })));
+      }
+      function renderTabs() { $('#week-nav').replaceChildren(...DAYS.map((day, index) => { const b = document.createElement('button'); b.className = 'day-tab' + (index === activeDay ? ' active' : ''); b.innerHTML = '<strong></strong><small></small>'; b.children[0].textContent = 'Dia ' + (index + 1) + ' · ' + day.name; b.children[1].textContent = descriptions[index] || 'Sem descrição'; b.onclick = () => { activeDay = index; render(); }; return b; })); }
+      function renderCopyDay() { const select = $('#copy-day'); select.replaceChildren(new Option('Copiar treino de…', '')); DAYS.forEach((day, index) => { if (index === activeDay) return; const count = plan[index] ? plan[index].length : 0; const option = new Option(day.name + ' (' + count + ' exercício' + (count === 1 ? '' : 's') + ')', String(index)); option.disabled = !count; select.append(option); }); }
+      function copyDay(sourceIndex) {
+        const source = DAYS[sourceIndex]; const target = DAYS[activeDay];
+        if (!plan[sourceIndex] || !plan[sourceIndex].length) return;
+        if (plan[activeDay].length && !confirm('Substituir os ' + plan[activeDay].length + ' exercício(s) de ' + target.name + ' pelo treino de ' + source.name + '?')) return;
+        plan[activeDay] = plan[sourceIndex].map((row) => ({ ...row }));
+        save(); render();
+      }
+      function image(item, className = '') { const img = document.createElement('img'); img.className = className; img.src = item.gifUrl; img.alt = item.name; img.loading = 'lazy'; img.onerror = () => { if (img.src !== item.thumbnailUrl) img.src = item.thumbnailUrl; }; return img; }
+      function entry(value, key, row) { const input = document.createElement('input'); input.className = 'entry'; input.value = value; input.placeholder = key === 'load' ? '—' : ''; input.setAttribute('aria-label', key); input.oninput = () => { row[key] = input.value; save(); }; return input; }
+      function render() {
+        renderTabs(); const day = DAYS[activeDay]; $('#day-title').textContent = 'Dia ' + (activeDay + 1) + ' · ' + day.name; $('#day-description').value = descriptions[activeDay]; $('#day-note').textContent = day.name === 'Sábado' ? 'Domingo: descanso' : ''; renderCopyDay();
+        const body = $('#workout-body'); body.replaceChildren();
+        if (!plan[activeDay].length) { const tr = document.createElement('tr'); const message = document.createElement('td'); message.colSpan = 8; message.textContent = 'Nenhum exercício neste dia. Use "+ Adicionar exercício" ou copie o treino de outro dia.'; message.style.cssText = 'padding:28px 18px;text-align:center;color:var(--muted)'; tr.append(message); body.append(tr); }
+        plan[activeDay].forEach((row, index) => { const tr = document.createElement('tr'); const count = document.createElement('td'); count.className = 'num'; count.textContent = index + 1; tr.append(count);
+          const exercise = document.createElement('td'); exercise.className = 'exercise'; const choose = document.createElement('button'); choose.className = 'exercise-button'; choose.onclick = () => openPicker(index);
+          if (row.exercise) { choose.append(image(row.exercise, 'exercise-thumb')); const label = document.createElement('span'); label.innerHTML = '<span class="exercise-name"></span><span class="exercise-group"></span>'; label.children[0].textContent = row.exercise.name; label.children[1].textContent = row.exercise.group; choose.append(label); } else { const placeholder = document.createElement('span'); placeholder.className = 'gif-placeholder'; choose.append(placeholder); const label = document.createElement('span'); label.className = 'exercise-name'; label.textContent = 'Selecionar exercício'; choose.append(label); } exercise.append(choose); tr.append(exercise);
+          [['sets','Séries'],['reps','Repetições'],['load','Carga'],['rest','Descanso'],['notes','Observações']].forEach(([key,label]) => { const td = document.createElement('td'); td.className = key === 'notes' ? 'note' : 'metric'; const input = entry(row[key], key, row); input.setAttribute('aria-label', label); td.append(input); tr.append(td); });
+          const gif = document.createElement('td'); gif.className = 'gif-col'; if (row.exercise) { const b = document.createElement('button'); b.className = 'gif-button'; b.title = 'Ver GIF'; b.onclick = () => openPreview(row.exercise); b.append(image(row.exercise)); gif.append(b); } else { gif.innerHTML = '<span class="empty-gif">—</span>'; } tr.append(gif); body.append(tr);
+        }); updateCount();
+      }
+      function renderCatalog() {
+        const term = normalize($('#catalog-search').value);
+        const group = $('#catalog-group').value;
+        const filtered = catalog.filter((item) => (!group || item.group === group) && (!term || normalize(item.name + ' ' + item.group + ' ' + item.folder).includes(term)));
+        $('#catalog-status').textContent = filtered.length + ' exercício' + (filtered.length === 1 ? '' : 's') + ' encontrado' + (filtered.length === 1 ? '' : 's');
+        const grid = $('#catalog-grid'); grid.replaceChildren();
+        if (!filtered.length) { grid.innerHTML = '<div class="catalog-empty">Nenhum exercício encontrado.</div>'; return; }
+        filtered.forEach((item) => { const card = document.createElement('button'); card.className = 'catalog-card'; card.title = 'Ver GIF de ' + item.name; card.append(image(item)); const name = document.createElement('span'); name.textContent = item.name; const groupName = document.createElement('small'); groupName.textContent = item.group; card.append(name, groupName); card.onclick = () => openPreview(item); grid.append(card); });
+      }
+      function setView(view) {
+        if (view === 'planner' && !sessionToken) { openAuth(); return; }
+        const library = view === 'library'; $('#planner-view').classList.toggle('active', !library); $('#library-view').classList.toggle('active', library);
+        document.querySelectorAll('[data-view]').forEach((button) => button.classList.toggle('active', button.dataset.view === view));
+        $('#reset').hidden = library; $('#print-day').hidden = library;
+        if (library && catalog.length) renderCatalog();
+      }
+      function updateAuthForm() { $('#auth-title').textContent = authIsRegister ? 'Criar conta' : 'Entrar'; $('#auth-submit').textContent = authIsRegister ? 'Criar conta' : 'Entrar'; $('#auth-toggle').textContent = authIsRegister ? 'Já tenho conta' : 'Criar conta'; $('#auth-name-wrap').hidden = !authIsRegister; $('#auth-invite-wrap').hidden = !authIsRegister; $('#auth-message').textContent = authIsRegister ? 'Use uma senha de pelo menos 6 caracteres e o código de convite.' : ''; }
+      function openAuth() { updateAuthForm(); $('#auth-dialog').showModal(); }
+      function finishAuth(data) { sessionToken = data.sessionToken; $('#auth-dialog').close(); $('#account-name').textContent = data.user.name; $('#account-name').hidden = false; $('#sign-out').hidden = false; $('#open-auth').hidden = true; $('[data-view="planner"]').hidden = false; setView('planner'); $('#save-status').textContent = 'Carregando seus treinos…'; loadMyWorkouts(); }
+      function loadMyWorkouts() {
+        google.script.run.withSuccessHandler((data) => { workouts = data.workouts; renderWorkoutSelect(); if (workouts.length) openWorkout(workouts[0].id); else createWorkout('Treino semanal'); }).withFailureHandler((error) => { $('#save-status').textContent = error.message || 'Não foi possível entrar'; signOut(); }).getMyWorkouts(sessionToken);
+      }
+      function renderWorkoutSelect() { const select = $('#workout-select'); select.replaceChildren(); workouts.forEach((workout) => { const option = document.createElement('option'); option.value = workout.id; option.textContent = workout.name; select.append(option); }); select.disabled = !workouts.length; $('#new-workout').disabled = false; $('#delete-workout').disabled = !currentWorkoutId; if (currentWorkoutId) select.value = currentWorkoutId; }
+      function createWorkout(name) { google.script.run.withSuccessHandler((workout) => { workouts.push(workout); renderWorkoutSelect(); openWorkout(workout.id, true); }).withFailureHandler((error) => { $('#save-status').textContent = error.message || 'Não foi possível criar o treino'; }).createMyWorkout(sessionToken, name); }
+      function openWorkout(workoutId, isNew = false) { currentWorkoutId = workoutId; renderWorkoutSelect(); $('#save-status').textContent = 'Carregando treino…'; google.script.run.withSuccessHandler((saved) => { const hasPlan = saved.plan.some((day) => day.length); plan = hasPlan ? planFromSheet(saved.plan) : makePlan(); descriptions = saved.descriptions || DAYS.map((day) => day.focus); render(); if (isNew || !hasPlan) scheduleSheetSave(); else $('#save-status').textContent = 'Salvo no Sheets'; }).withFailureHandler((error) => { $('#save-status').textContent = error.message || 'Não foi possível carregar o treino'; }).getMyWorkoutPlan(sessionToken, workoutId); }
+      function deleteWorkout() {
+        const workout = workouts.find((item) => item.id === currentWorkoutId); if (!workout) return;
+        if (!confirm('Excluir o treino "' + workout.name + '"? Ele deixará de aparecer na sua lista.')) return;
+        clearTimeout(saveTimer); $('#delete-workout').disabled = true; $('#save-status').textContent = 'Excluindo…';
+        google.script.run.withSuccessHandler(() => { workouts = workouts.filter((item) => item.id !== workout.id); currentWorkoutId = ''; if (workouts.length) openWorkout(workouts[0].id); else createWorkout('Treino semanal'); }).withFailureHandler((error) => { $('#delete-workout').disabled = false; $('#save-status').textContent = error.message || 'Não foi possível excluir o treino'; }).deleteMyWorkout(sessionToken, workout.id);
+      }
+      function signOut() { sessionToken = ''; currentWorkoutId = ''; workouts = []; $('#account-name').hidden = true; $('#sign-out').hidden = true; $('#open-auth').hidden = false; $('[data-view="planner"]').hidden = true; setView('library'); $('#workout-select').replaceChildren(new Option('Entre para ver seus treinos', '')); $('#workout-select').disabled = true; $('#new-workout').disabled = true; $('#delete-workout').disabled = true; plan = makePlan(); descriptions = DAYS.map((day) => day.focus); render(); $('#save-status').textContent = 'Entre para salvar'; }
+      function openPicker(rowIndex) { selectedRow = rowIndex; $('#picker-search').value = ''; renderPicker(); $('#picker').showModal(); setTimeout(() => $('#picker-search').focus(), 0); }
+      function renderPicker() { const term = normalize($('#picker-search').value); const found = catalog.filter((item) => !term || normalize(item.name + ' ' + item.group + ' ' + item.folder).includes(term)).slice(0, 120); const list = $('#picker-list'); list.replaceChildren(); if (!found.length) { list.textContent = 'Nenhum exercício encontrado.'; return; } found.forEach((item) => { const b = document.createElement('button'); b.className = 'picker-item'; b.append(image(item)); const info = document.createElement('span'); info.innerHTML = '<strong></strong><small></small>'; info.children[0].textContent = item.name; info.children[1].textContent = item.group; b.append(info); b.onclick = () => { plan[activeDay][selectedRow].exercise = item; save(); $('#picker').close(); render(); }; list.append(b); }); }
+      function openPreview(item) { $('#preview-title').textContent = item.name; const content = $('#preview-content'); content.replaceChildren(image(item)); $('#preview').showModal(); }
+      document.querySelectorAll('[data-close]').forEach((button) => button.onclick = () => $('#' + button.dataset.close).close()); $('#picker-search').addEventListener('input', renderPicker);
+      document.querySelectorAll('[data-view]').forEach((button) => button.onclick = () => setView(button.dataset.view)); setView('library');
+      $('#catalog-search').addEventListener('input', renderCatalog); $('#catalog-group').addEventListener('change', renderCatalog);
+      $('#day-description').oninput = (event) => { descriptions[activeDay] = event.target.value; renderTabs(); scheduleSheetSave(); };
+      $('#copy-day').onchange = (event) => { const value = event.target.value; event.target.value = ''; if (value !== '') copyDay(Number(value)); };
+      $('#add-row').onclick = () => { plan[activeDay].push(blankRow()); save(); render(); };
+      $('#reset').onclick = () => { if (confirm('Restaurar a ficha sugerida? As alterações salvas neste dispositivo serão substituídas.')) { plan = makePlan(); descriptions = DAYS.map((day) => day.focus); save(); render(); } };
+      $('#workout-select').addEventListener('change', () => openWorkout($('#workout-select').value)); $('#new-workout').onclick = () => { const name = prompt('Nome do novo treino:', 'Novo treino'); if (name) createWorkout(name); }; $('#sign-out').onclick = signOut; $('#delete-workout').onclick = deleteWorkout; $('#open-auth').onclick = openAuth;
+      $('#auth-toggle').onclick = () => { authIsRegister = !authIsRegister; updateAuthForm(); }; $('#auth-form').onsubmit = (event) => { event.preventDefault(); const name = $('#auth-name').value; const email = $('#auth-email').value; const password = $('#auth-password').value; const inviteCode = $('#auth-invite').value; $('#auth-message').textContent = 'Aguarde…'; const call = google.script.run.withSuccessHandler(finishAuth).withFailureHandler((error) => { $('#auth-message').textContent = error.message || 'Não foi possível concluir.'; }); if (authIsRegister) call.registerUser(name, email, password, inviteCode); else call.loginUser(email, password); };
+      google.script.run.withSuccessHandler((data) => { catalog = data; [...new Set(data.map((item) => item.group))].sort((a,b) => a.localeCompare(b, 'pt-BR')).forEach((group) => { const option = document.createElement('option'); option.value = option.textContent = group; $('#catalog-group').append(option); }); if (!sessionToken) { plan = makePlan(); render(); } else if (currentWorkoutId) openWorkout(currentWorkoutId); renderCatalog(); }).withFailureHandler((error) => { $('#day-title').textContent = 'Não foi possível carregar os exercícios'; $('#day-subtitle').textContent = error.message; $('#catalog-status').textContent = 'Erro: ' + error.message; $('#save-status').textContent = 'Erro ao carregar'; }).getCatalog();
+    </script>
+  </body>
+</html>
