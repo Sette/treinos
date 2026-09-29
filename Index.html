@@ -25,11 +25,11 @@
       <div class="topbar"><span class="brand">Biblioteca de Treinos</span><div class="account"><span class="account-name" id="account-name" hidden></span><button class="button primary" id="open-auth">Entrar</button><button class="sign-out" id="sign-out" hidden>Sair</button></div></div>
       <header>
         <div><p class="eyebrow">Treinos em movimento</p><h1>Seu treino,<br>organizado.</h1><p class="intro">Treine cada grupo muscular duas vezes na semana e explore os exercícios com demonstrações em GIF.</p></div>
-        <div class="header-actions"><div class="view-switch" aria-label="Visualização"><button data-view="planner" hidden>Minha semana</button><button class="active" data-view="library">Biblioteca</button></div><button class="button ghost" id="reset">Restaurar modelo</button><button class="button primary" id="export-week">Exportar treino</button></div>
+        <div class="header-actions"><div class="view-switch" aria-label="Visualização"><button data-view="planner" hidden>Minha semana</button><button class="active" data-view="library">Biblioteca</button></div><button class="button primary" id="export-week">Exportar treino</button></div>
       </header>
       <section class="view" id="planner-view">
       <div class="workout-bar"><div><label for="workout-select">Treino ativo</label><select class="workout-select" id="workout-select" disabled><option>Entre para ver seus treinos</option></select></div><div class="workout-actions"><button class="new-workout delete-workout" id="delete-workout" disabled>Excluir treino</button><button class="new-workout" id="new-workout" disabled>+ Novo treino</button></div></div>
-      <section class="summary" aria-label="Resumo da semana"><div class="summary-item"><span class="summary-label">Ciclo atual</span><strong class="summary-value">Superior / inferior</strong></div><div class="summary-item"><span class="summary-label">Dias ativos</span><strong class="summary-value" id="active-days">—</strong></div><div class="summary-item"><span class="summary-label">Exercícios</span><strong class="summary-value" id="exercise-count">—</strong></div><div class="summary-item"><span class="summary-label">Status</span><strong class="summary-value" id="save-status">Carregando…</strong></div></section>
+      <section class="summary" aria-label="Resumo da semana"><div class="summary-item"><span class="summary-label">Treino</span><strong class="summary-value" id="workout-name">—</strong></div><div class="summary-item"><span class="summary-label">Dias ativos</span><strong class="summary-value" id="active-days">—</strong></div><div class="summary-item"><span class="summary-label">Exercícios</span><strong class="summary-value" id="exercise-count">—</strong></div><div class="summary-item"><span class="summary-label">Status</span><strong class="summary-value" id="save-status">Carregando…</strong></div></section>
       <nav class="week-nav" id="week-nav" aria-label="Dias de treino"></nav>
       <main class="plan"><div class="plan-heading"><div><h2 id="day-title">Carregando ficha…</h2><p id="day-subtitle"><input class="day-description" id="day-description" maxlength="120" placeholder="Descreva o foco deste dia" aria-label="Descrição do dia"><span id="day-note"></span></p></div><div class="plan-actions"><select class="copy-day" id="copy-day" aria-label="Copiar treino de outro dia"></select><button class="add" id="add-row">+ Adicionar exercício</button></div></div><div class="table-wrap"><table class="workout-table"><thead><tr><th class="num">#</th><th class="exercise">Exercício</th><th class="metric">Séries</th><th class="metric">Reps.</th><th class="metric">Carga</th><th class="metric">Descanso</th><th class="note">Observações</th><th class="gif-col">GIF</th><th class="remove-col"><span class="sr-only">Remover</span></th></tr></thead><tbody id="workout-body"></tbody></table></div></main>
       <p class="footer-note">Clique no nome do exercício para trocar o movimento e arraste pelo ⠿ para mudar a ordem. Os campos da ficha podem ser preenchidos livremente e são salvos na sua conta.</p>
@@ -46,69 +46,25 @@
     <script>
       const STORAGE_KEY = 'ficha-semanal-superior-inferior-v2';
       const DAYS = [
-        { name:'Segunda', focus:'Superior A · peito, costas, ombros e braços' },
-        { name:'Terça', focus:'Inferior A · quadríceps, posteriores e panturrilhas' },
-        { name:'Quarta', focus:'' },
-        { name:'Quinta', focus:'Superior B · peito, costas, ombros e braços' },
-        { name:'Sexta', focus:'Inferior B · quadríceps, posteriores e glúteos' },
-        { name:'Sábado', focus:'' }
+        { name:'Segunda' },
+        { name:'Terça' },
+        { name:'Quarta' },
+        { name:'Quinta' },
+        { name:'Sexta' },
+        { name:'Sábado' }
       ];
-      const DEFAULT_EXERCISES = [
-        [
-          { queries:[['supino','reto','maquina'], ['supino','horizontal','maquina'], ['supino','reto']], sets:'3', reps:'8–12', rest:'90 s' },
-          { queries:[['remada','baixa','polia'], ['remada','baixa','cabo'], ['remada','maquina'], ['remada']], sets:'3', reps:'8–12', rest:'90 s' },
-          { queries:[['desenvolvimento','maquina'], ['desenvolvimento','halteres'], ['desenvolvimento']], sets:'3', reps:'8–12', rest:'75 s' },
-          { queries:[['puxada','frente'], ['pulley','frente'], ['puxada','maquina']], sets:'3', reps:'8–12', rest:'90 s' },
-          { queries:[['rosca','halteres'], ['rosca','biceps'], ['rosca']], sets:'2', reps:'10–15', rest:'60 s' },
-          { queries:[['triceps','corda'], ['triceps','pulley'], ['triceps']], sets:'2', reps:'10–15', rest:'60 s' }
-        ],
-        [
-          { queries:[['agachamento','livre'], ['agachamento','halteres'], ['agachamento'], ['leg','press']], sets:'3', reps:'8–12', rest:'90 s' },
-          { queries:[['levantamento','romeno'], ['stiff'], ['levantamento','terra']], sets:'3', reps:'8–12', rest:'90 s' },
-          { queries:[['leg','press'], ['press','pernas']], sets:'3', reps:'10–15', rest:'90 s' },
-          { queries:[['mesa','flexora'], ['flexora','maquina'], ['cadeira','flexora']], sets:'2', reps:'10–15', rest:'60 s' },
-          { queries:[['panturrilha','maquina'], ['panturrilha','sentado'], ['panturrilha']], sets:'3', reps:'12–20', rest:'60 s' },
-          { queries:[['abdominal','maquina'], ['abdominal'], ['prancha']], sets:'2', reps:'10–15', rest:'60 s' }
-        ],
-        [],
-        [
-          { queries:[['supino','inclinado'], ['supino','halteres'], ['supino']], sets:'3', reps:'8–12', rest:'90 s' },
-          { queries:[['remada','unilateral'], ['remada','halteres'], ['remada']], sets:'3', reps:'8–12', rest:'90 s' },
-          { queries:[['elevacao','lateral'], ['elevação','lateral'], ['lateral','ombro']], sets:'3', reps:'12–15', rest:'60 s' },
-          { queries:[['puxada','neutra'], ['puxada','frente'], ['pulley','frente'], ['puxada']], sets:'3', reps:'8–12', rest:'90 s' },
-          { queries:[['rosca','martelo'], ['rosca','halteres'], ['rosca']], sets:'2', reps:'10–15', rest:'60 s' },
-          { queries:[['triceps','frances'], ['triceps','cabo'], ['triceps']], sets:'2', reps:'10–15', rest:'60 s' }
-        ],
-        [
-          { queries:[['cadeira','extensora'], ['extensora']], sets:'3', reps:'10–15', rest:'60 s' },
-          { queries:[['mesa','flexora'], ['flexora','maquina'], ['cadeira','flexora']], sets:'3', reps:'10–15', rest:'60 s' },
-          { queries:[['afundo'], ['passada'], ['agachamento','halteres'], ['agachamento']], sets:'3', reps:'8–12', rest:'90 s' },
-          { queries:[['elevacao','pelvica'], ['elevação','pélvica'], ['hip','thrust'], ['gluteo']], sets:'3', reps:'8–12', rest:'90 s' },
-          { queries:[['panturrilha','maquina'], ['panturrilha','sentado'], ['panturrilha']], sets:'3', reps:'12–20', rest:'60 s' },
-          { queries:[['prancha'], ['abdominal']], sets:'2', reps:'10–15', rest:'60 s' }
-        ],
-        []
-      ];
-      let catalog = [], plan = [], descriptions = DAYS.map((day) => day.focus), activeDay = 0, selectedRow = null, saveTimer = null, sessionToken = '', currentWorkoutId = '', workouts = [], authIsRegister = false;
+      let catalog = [], plan = DAYS.map(() => []), descriptions = DAYS.map(() => ''), loading = false, activeDay = 0, selectedRow = null, saveTimer = null, sessionToken = '', currentWorkoutId = '', workouts = [], authIsRegister = false;
       const $ = (selector) => document.querySelector(selector);
       const normalize = (value = '') => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
       const blankRow = () => ({ exercise:null, sets:'3', reps:'10–12', load:'', rest:'60 s', notes:'' });
 
-      function findDefaultExercise(queries) {
-        return queries.map((terms) => catalog.find((item) => {
-          const description = normalize(item.name + ' ' + item.group + ' ' + item.folder);
-          return terms.every((term) => description.includes(normalize(term)));
-        })).find(Boolean) || null;
-      }
-      function makePlan() {
-        return DEFAULT_EXERCISES.map((day) => day.map(({ queries, ...definition }) => ({
-          ...blankRow(), ...definition, exercise:findDefaultExercise(queries)
-        })));
-      }
+      const emptyPlan = () => DAYS.map(() => []);
+      const emptyDescriptions = () => DAYS.map(() => '');
       function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(plan)); updateCount(); scheduleSheetSave(); }
       function updateCount() { $('#exercise-count').textContent = plan.flat().filter((row) => row.exercise).length + ' exercícios'; const active = plan.filter((day) => day.some((row) => row.exercise)).length; $('#active-days').textContent = active + (active === 1 ? ' dia' : ' dias'); }
       function scheduleSheetSave() {
         if (!sessionToken || !currentWorkoutId) { $('#save-status').textContent = 'Entre para salvar'; return; }
+        if (loading) return; // never overwrite the saved plan with the empty one shown while loading
         clearTimeout(saveTimer); $('#save-status').textContent = 'Salvando…';
         saveTimer = setTimeout(() => google.script.run.withSuccessHandler(() => { $('#save-status').textContent = 'Salvo no Sheets'; }).withFailureHandler((error) => { $('#save-status').textContent = 'Erro ao salvar'; console.error(error); }).saveMyWorkoutPlan(sessionToken, currentWorkoutId, plan, descriptions), 900);
       }
@@ -127,9 +83,9 @@
       function image(item, className = '') { const img = document.createElement('img'); img.className = className; img.src = item.gifUrl; img.alt = item.name; img.loading = 'lazy'; img.onerror = () => { if (img.src !== item.thumbnailUrl) img.src = item.thumbnailUrl; }; return img; }
       function entry(value, key, row) { const input = document.createElement('input'); input.className = 'entry'; input.value = value; input.placeholder = key === 'load' ? '—' : ''; input.setAttribute('aria-label', key); input.oninput = () => { row[key] = input.value; save(); }; return input; }
       function render() {
-        renderTabs(); const day = DAYS[activeDay]; $('#day-title').textContent = 'Dia ' + (activeDay + 1) + ' · ' + day.name; $('#day-description').value = descriptions[activeDay]; $('#day-note').textContent = day.name === 'Sábado' ? 'Domingo: descanso' : ''; renderCopyDay();
+        renderTabs(); const day = DAYS[activeDay]; $('#day-title').textContent = 'Dia ' + (activeDay + 1) + ' · ' + day.name; $('#day-description').value = descriptions[activeDay]; $('#day-note').textContent = day.name === 'Sábado' ? 'Domingo: descanso' : ''; renderCopyDay(); $('#add-row').disabled = loading; $('#copy-day').disabled = loading; $('#day-description').disabled = loading;
         const body = $('#workout-body'); body.replaceChildren();
-        if (!plan[activeDay].length) { const tr = document.createElement('tr'); const message = document.createElement('td'); message.colSpan = 9; message.textContent = 'Nenhum exercício neste dia. Use "+ Adicionar exercício" ou copie o treino de outro dia.'; message.style.cssText = 'padding:28px 18px;text-align:center;color:var(--muted)'; tr.append(message); body.append(tr); }
+        if (loading || !plan[activeDay].length) { const tr = document.createElement('tr'); const message = document.createElement('td'); message.colSpan = 9; message.textContent = loading ? 'Carregando seu treino…' : 'Nenhum exercício neste dia. Use "+ Adicionar exercício" ou copie o treino de outro dia.'; message.style.cssText = 'padding:28px 18px;text-align:center;color:var(--muted)'; tr.append(message); body.append(tr); }
         plan[activeDay].forEach((row, index) => { const tr = document.createElement('tr'); tr.dataset.index = index; const count = document.createElement('td'); count.className = 'num'; const handle = document.createElement('button'); handle.className = 'drag-handle'; handle.textContent = '⠿'; handle.title = 'Arraste para mudar a ordem'; handle.setAttribute('aria-label', 'Mover exercício ' + (index + 1) + ' (arraste ou use as setas)'); handle.onpointerdown = (event) => startDrag(event, tr); handle.onkeydown = (event) => moveWithKeyboard(event, index); count.append(handle, String(index + 1)); tr.append(count);
           const exercise = document.createElement('td'); exercise.className = 'exercise'; const choose = document.createElement('button'); choose.className = 'exercise-button'; choose.onclick = () => openPicker(index);
           if (row.exercise) { choose.append(image(row.exercise, 'exercise-thumb')); const label = document.createElement('span'); label.innerHTML = '<span class="exercise-name"></span><span class="exercise-group"></span>'; label.children[0].textContent = row.exercise.name; label.children[1].textContent = row.exercise.group; choose.append(label); } else { const placeholder = document.createElement('span'); placeholder.className = 'gif-placeholder'; choose.append(placeholder); const label = document.createElement('span'); label.className = 'exercise-name'; label.textContent = 'Selecionar exercício'; choose.append(label); } exercise.append(choose); tr.append(exercise);
@@ -155,29 +111,47 @@
         };
         window.addEventListener('pointermove', move); window.addEventListener('pointerup', end); window.addEventListener('pointercancel', end);
       }
-      // Plain text with WhatsApp formatting (*negrito*, _itálico_), which also reads fine in notes apps.
+      // WhatsApp markup: *negrito* and _itálico_ only work when the marker touches
+      // the text, so values are trimmed before being wrapped.
       function workoutText() {
         const workout = workouts.find((item) => item.id === currentWorkoutId);
-        const lines = ['*' + (workout ? workout.name : 'Treino semanal') + '*'];
-        DAYS.forEach((day, dayIndex) => {
-          const rows = plan[dayIndex].filter((row) => row.exercise);
-          lines.push('', '*Dia ' + (dayIndex + 1) + ' · ' + day.name + '*' + (descriptions[dayIndex] ? ' — ' + descriptions[dayIndex] : ''));
-          if (!rows.length) { lines.push('_Descanso_'); return; }
+        const clean = (value) => String(value || '').trim();
+        const divider = '━━━━━━━━━━━━━━━';
+        const lines = ['🏋️ *' + clean(workout ? workout.name : 'Treino semanal').toUpperCase() + '*'];
+        DAYS.concat({ name:'Domingo' }).forEach((day, dayIndex) => {
+          const rows = (plan[dayIndex] || []).filter((row) => row.exercise);
+          const description = clean(descriptions[dayIndex]);
+          lines.push('', divider);
+          if (!rows.length) { lines.push('😴 *' + day.name.toUpperCase() + '* · _Descanso_'); return; }
+          lines.push('📅 *' + day.name.toUpperCase() + '*' + (description ? ' · _' + description + '_' : ''), '');
           rows.forEach((row, index) => {
-            const details = [[row.sets, row.reps].filter(Boolean).join(' x '), row.load && 'carga ' + row.load, row.rest && 'descanso ' + row.rest].filter(Boolean);
-            lines.push((index + 1) + '. ' + row.exercise.name + (details.length ? ' — ' + details.join(' · ') : ''));
-            if (row.notes) lines.push('   Obs.: ' + row.notes);
+            const volume = [clean(row.sets) && clean(row.sets) + ' séries', clean(row.reps) && clean(row.reps) + ' reps'].filter(Boolean).join(' × ');
+            const details = [volume, clean(row.load) && '🏋️ ' + clean(row.load), clean(row.rest) && '⏱️ ' + clean(row.rest)].filter(Boolean);
+            lines.push('*' + (index + 1) + '. ' + clean(row.exercise.name) + '*');
+            if (details.length) lines.push('    ' + details.join('  ·  '));
+            if (clean(row.notes)) lines.push('    📝 _' + clean(row.notes) + '_');
           });
         });
-        lines.push('', '*Dia 7 · Domingo*', '_Descanso_');
+        lines.push('', divider);
         return lines.join('\n');
       }
       function openExport() { $('#export-text').value = workoutText(); $('#export-status').textContent = ''; $('#export-dialog').showModal(); }
-      function copyExport() {
-        const text = $('#export-text'); const done = () => { $('#export-status').textContent = 'Texto copiado!'; };
-        // The Apps Script sandbox may block the Clipboard API, so fall back to selecting the text.
-        const fallback = () => { text.focus(); text.select(); $('#export-status').textContent = document.execCommand('copy') ? 'Texto copiado!' : 'Texto selecionado — use Ctrl+C para copiar.'; };
-        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text.value).then(done, fallback); else fallback();
+      // Copying synchronously keeps the click "gesture", which the Apps Script
+      // sandbox needs; the Clipboard API is only a second attempt.
+      function copyExport(onDone) {
+        const text = $('#export-text'); text.focus(); text.select();
+        let copied = false; try { copied = document.execCommand('copy'); } catch (error) {}
+        const report = (ok) => { $('#export-status').textContent = ok ? 'Texto copiado!' : 'Texto selecionado — use Ctrl+C para copiar.'; if (onDone) onDone(ok); };
+        if (copied || !navigator.clipboard) report(copied); else navigator.clipboard.writeText(text.value).then(() => report(true), () => report(false));
+      }
+      // wa.me without a phone number is unreliable on WhatsApp Web, so desktop goes
+      // straight to web.whatsapp.com. The text is also copied, so it can be pasted
+      // if WhatsApp does not fill it in.
+      function sendToWhatsApp() {
+        const text = encodeURIComponent($('#export-text').value);
+        const mobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+        copyExport((ok) => { $('#export-status').textContent = ok ? 'Texto copiado. Se não aparecer no WhatsApp, cole na conversa (Ctrl+V).' : 'Se o texto não aparecer no WhatsApp, copie daqui (Ctrl+C) e cole na conversa.'; });
+        window.open((mobile ? 'https://api.whatsapp.com/send?text=' : 'https://web.whatsapp.com/send?text=') + text, '_blank');
       }
       function removeRow(index) {
         const row = plan[activeDay][index]; const name = row.exercise ? row.exercise.name : 'este exercício';
@@ -203,25 +177,27 @@
         if (view === 'planner' && !sessionToken) { openAuth(); return; }
         const library = view === 'library'; $('#planner-view').classList.toggle('active', !library); $('#library-view').classList.toggle('active', library);
         document.querySelectorAll('[data-view]').forEach((button) => button.classList.toggle('active', button.dataset.view === view));
-        $('#reset').hidden = library; $('#export-week').hidden = library;
+        $('#export-week').hidden = library;
         if (library && catalog.length) renderCatalog();
       }
       function updateAuthForm() { $('#auth-title').textContent = authIsRegister ? 'Criar conta' : 'Entrar'; $('#auth-submit').textContent = authIsRegister ? 'Criar conta' : 'Entrar'; $('#auth-toggle').textContent = authIsRegister ? 'Já tenho conta' : 'Criar conta'; $('#auth-name-wrap').hidden = !authIsRegister; $('#auth-invite-wrap').hidden = !authIsRegister; $('#auth-message').textContent = authIsRegister ? 'Use uma senha de pelo menos 6 caracteres e o código de convite.' : ''; }
       function openAuth() { updateAuthForm(); $('#auth-dialog').showModal(); }
       function finishAuth(data) { sessionToken = data.sessionToken; $('#auth-dialog').close(); $('#account-name').textContent = data.user.name; $('#account-name').hidden = false; $('#sign-out').hidden = false; $('#open-auth').hidden = true; $('[data-view="planner"]').hidden = false; setView('planner'); $('#save-status').textContent = 'Carregando seus treinos…'; loadMyWorkouts(); }
       function loadMyWorkouts() {
-        google.script.run.withSuccessHandler((data) => { workouts = data.workouts; renderWorkoutSelect(); if (workouts.length) openWorkout(workouts[0].id); else createWorkout('Treino semanal'); }).withFailureHandler((error) => { $('#save-status').textContent = error.message || 'Não foi possível entrar'; signOut(); }).getMyWorkouts(sessionToken);
+        setLoading(true); google.script.run.withSuccessHandler((data) => { workouts = data.workouts; if (!workouts.length) { createWorkout('Treino semanal'); return; } currentWorkoutId = workouts[0].id; renderWorkoutSelect(); if (data.current && catalog.length) applySavedPlan(data.current); else openWorkout(currentWorkoutId); }).withFailureHandler((error) => { $('#save-status').textContent = error.message || 'Não foi possível entrar'; signOut(); }).getMyWorkouts(sessionToken);
       }
-      function renderWorkoutSelect() { const select = $('#workout-select'); select.replaceChildren(); workouts.forEach((workout) => { const option = document.createElement('option'); option.value = workout.id; option.textContent = workout.name; select.append(option); }); select.disabled = !workouts.length; $('#new-workout').disabled = false; $('#delete-workout').disabled = !currentWorkoutId; if (currentWorkoutId) select.value = currentWorkoutId; }
-      function createWorkout(name) { google.script.run.withSuccessHandler((workout) => { workouts.push(workout); renderWorkoutSelect(); openWorkout(workout.id, true); }).withFailureHandler((error) => { $('#save-status').textContent = error.message || 'Não foi possível criar o treino'; }).createMyWorkout(sessionToken, name); }
-      function openWorkout(workoutId, isNew = false) { currentWorkoutId = workoutId; renderWorkoutSelect(); $('#save-status').textContent = 'Carregando treino…'; google.script.run.withSuccessHandler((saved) => { const hasPlan = saved.plan.some((day) => day.length); plan = hasPlan ? planFromSheet(saved.plan) : makePlan(); descriptions = saved.descriptions || DAYS.map((day) => day.focus); render(); if (isNew || !hasPlan) scheduleSheetSave(); else $('#save-status').textContent = 'Salvo no Sheets'; }).withFailureHandler((error) => { $('#save-status').textContent = error.message || 'Não foi possível carregar o treino'; }).getMyWorkoutPlan(sessionToken, workoutId); }
+      function renderWorkoutSelect() { const select = $('#workout-select'); select.replaceChildren(); workouts.forEach((workout) => { const option = document.createElement('option'); option.value = workout.id; option.textContent = workout.name; select.append(option); }); select.disabled = !workouts.length; $('#new-workout').disabled = false; $('#delete-workout').disabled = !currentWorkoutId; if (currentWorkoutId) select.value = currentWorkoutId; const current = workouts.find((item) => item.id === currentWorkoutId); $('#workout-name').textContent = current ? current.name : '—'; }
+      function createWorkout(name) { google.script.run.withSuccessHandler((workout) => { workouts.push(workout); renderWorkoutSelect(); openWorkout(workout.id); }).withFailureHandler((error) => { $('#save-status').textContent = error.message || 'Não foi possível criar o treino'; }).createMyWorkout(sessionToken, name); }
+      function setLoading(value) { loading = value; clearTimeout(saveTimer); $('#export-week').disabled = value; if (value) { plan = emptyPlan(); descriptions = emptyDescriptions(); $('#save-status').textContent = 'Carregando treino…'; } render(); }
+      function applySavedPlan(saved) { plan = planFromSheet(saved.plan); descriptions = saved.descriptions || emptyDescriptions(); loading = false; $('#export-week').disabled = false; render(); $('#save-status').textContent = 'Salvo no Sheets'; }
+      function openWorkout(workoutId) { currentWorkoutId = workoutId; renderWorkoutSelect(); setLoading(true); google.script.run.withSuccessHandler((saved) => { if (currentWorkoutId === workoutId) applySavedPlan(saved); }).withFailureHandler((error) => { $('#save-status').textContent = error.message || 'Não foi possível carregar o treino'; }).getMyWorkoutPlan(sessionToken, workoutId); }
       function deleteWorkout() {
         const workout = workouts.find((item) => item.id === currentWorkoutId); if (!workout) return;
         if (!confirm('Excluir o treino "' + workout.name + '"? Ele deixará de aparecer na sua lista.')) return;
         clearTimeout(saveTimer); $('#delete-workout').disabled = true; $('#save-status').textContent = 'Excluindo…';
         google.script.run.withSuccessHandler(() => { workouts = workouts.filter((item) => item.id !== workout.id); currentWorkoutId = ''; if (workouts.length) openWorkout(workouts[0].id); else createWorkout('Treino semanal'); }).withFailureHandler((error) => { $('#delete-workout').disabled = false; $('#save-status').textContent = error.message || 'Não foi possível excluir o treino'; }).deleteMyWorkout(sessionToken, workout.id);
       }
-      function signOut() { sessionToken = ''; currentWorkoutId = ''; workouts = []; $('#account-name').hidden = true; $('#sign-out').hidden = true; $('#open-auth').hidden = false; $('[data-view="planner"]').hidden = true; setView('library'); $('#workout-select').replaceChildren(new Option('Entre para ver seus treinos', '')); $('#workout-select').disabled = true; $('#new-workout').disabled = true; $('#delete-workout').disabled = true; plan = makePlan(); descriptions = DAYS.map((day) => day.focus); render(); $('#save-status').textContent = 'Entre para salvar'; }
+      function signOut() { loading = false; $('#workout-name').textContent = '—'; sessionToken = ''; currentWorkoutId = ''; workouts = []; $('#account-name').hidden = true; $('#sign-out').hidden = true; $('#open-auth').hidden = false; $('[data-view="planner"]').hidden = true; setView('library'); $('#workout-select').replaceChildren(new Option('Entre para ver seus treinos', '')); $('#workout-select').disabled = true; $('#new-workout').disabled = true; $('#delete-workout').disabled = true; plan = emptyPlan(); descriptions = emptyDescriptions(); render(); $('#save-status').textContent = 'Entre para salvar'; }
       function openPicker(rowIndex) { selectedRow = rowIndex; $('#picker-search').value = ''; renderPicker(); $('#picker').showModal(); setTimeout(() => $('#picker-search').focus(), 0); }
       function renderPicker() { const term = normalize($('#picker-search').value); const found = catalog.filter((item) => !term || normalize(item.name + ' ' + item.group + ' ' + item.folder).includes(term)).slice(0, 120); const list = $('#picker-list'); list.replaceChildren(); if (!found.length) { list.textContent = 'Nenhum exercício encontrado.'; return; } found.forEach((item) => { const b = document.createElement('button'); b.className = 'picker-item'; b.append(image(item)); const info = document.createElement('span'); info.innerHTML = '<strong></strong><small></small>'; info.children[0].textContent = item.name; info.children[1].textContent = item.group; b.append(info); b.onclick = () => { plan[activeDay][selectedRow].exercise = item; save(); $('#picker').close(); render(); }; list.append(b); }); }
       function openPreview(item) { $('#preview-title').textContent = item.name; const content = $('#preview-content'); content.replaceChildren(image(item)); $('#preview').showModal(); }
@@ -231,10 +207,9 @@
       $('#day-description').oninput = (event) => { descriptions[activeDay] = event.target.value; renderTabs(); scheduleSheetSave(); };
       $('#copy-day').onchange = (event) => { const value = event.target.value; event.target.value = ''; if (value !== '') copyDay(Number(value)); };
       $('#add-row').onclick = () => { plan[activeDay].push(blankRow()); save(); render(); };
-      $('#reset').onclick = () => { if (confirm('Restaurar a ficha sugerida? As alterações salvas neste dispositivo serão substituídas.')) { plan = makePlan(); descriptions = DAYS.map((day) => day.focus); save(); render(); } };
-      $('#workout-select').addEventListener('change', () => openWorkout($('#workout-select').value)); $('#new-workout').onclick = () => { const name = prompt('Nome do novo treino:', 'Novo treino'); if (name) createWorkout(name); }; $('#sign-out').onclick = signOut; $('#export-week').onclick = openExport; $('#export-copy').onclick = copyExport; $('#export-whatsapp').onclick = () => window.open('https://wa.me/?text=' + encodeURIComponent($('#export-text').value), '_blank'); $('#delete-workout').onclick = deleteWorkout; $('#open-auth').onclick = openAuth;
+      $('#workout-select').addEventListener('change', () => openWorkout($('#workout-select').value)); $('#new-workout').onclick = () => { const name = prompt('Nome do novo treino:', 'Novo treino'); if (name) createWorkout(name); }; $('#sign-out').onclick = signOut; $('#export-week').onclick = openExport; $('#export-copy').onclick = () => copyExport(); $('#export-whatsapp').onclick = sendToWhatsApp; $('#delete-workout').onclick = deleteWorkout; $('#open-auth').onclick = openAuth;
       $('#auth-toggle').onclick = () => { authIsRegister = !authIsRegister; updateAuthForm(); }; $('#auth-form').onsubmit = (event) => { event.preventDefault(); const name = $('#auth-name').value; const email = $('#auth-email').value; const password = $('#auth-password').value; const inviteCode = $('#auth-invite').value; $('#auth-message').textContent = 'Aguarde…'; const call = google.script.run.withSuccessHandler(finishAuth).withFailureHandler((error) => { $('#auth-message').textContent = error.message || 'Não foi possível concluir.'; }); if (authIsRegister) call.registerUser(name, email, password, inviteCode); else call.loginUser(email, password); };
-      google.script.run.withSuccessHandler((data) => { catalog = data; [...new Set(data.map((item) => item.group))].sort((a,b) => a.localeCompare(b, 'pt-BR')).forEach((group) => { const option = document.createElement('option'); option.value = option.textContent = group; $('#catalog-group').append(option); }); if (!sessionToken) { plan = makePlan(); render(); } else if (currentWorkoutId) openWorkout(currentWorkoutId); renderCatalog(); }).withFailureHandler((error) => { $('#day-title').textContent = 'Não foi possível carregar os exercícios'; $('#day-note').textContent = error.message; $('#catalog-status').textContent = 'Erro: ' + error.message; $('#save-status').textContent = 'Erro ao carregar'; }).getCatalog();
+      google.script.run.withSuccessHandler((data) => { catalog = data; [...new Set(data.map((item) => item.group))].sort((a,b) => a.localeCompare(b, 'pt-BR')).forEach((group) => { const option = document.createElement('option'); option.value = option.textContent = group; $('#catalog-group').append(option); }); if (!sessionToken) { plan = emptyPlan(); descriptions = emptyDescriptions(); render(); } else if (currentWorkoutId) openWorkout(currentWorkoutId); renderCatalog(); }).withFailureHandler((error) => { $('#day-title').textContent = 'Não foi possível carregar os exercícios'; $('#day-note').textContent = error.message; $('#catalog-status').textContent = 'Erro: ' + error.message; $('#save-status').textContent = 'Erro ao carregar'; }).getCatalog();
     </script>
   </body>
 </html>

@@ -142,7 +142,8 @@ function getMyWorkouts(sessionToken) {
   const values = sheet.getLastRow() < 2 ? [] : sheet.getRange(2, 1, sheet.getLastRow() - 1, 6).getValues();
   const workouts = values.filter((row) => String(row[1]) === user.id && row[3] !== 'Arquivado')
     .map((row) => ({ id: String(row[0]), name: String(row[2]), updatedAt: String(row[5] || '') }));
-  return { user: user, workouts: workouts };
+  // The first workout's plan comes along so the page needs a single round trip.
+  return { user: user, workouts: workouts, current: workouts.length ? loadWorkoutPlan_(workouts[0].id) : null };
 }
 
 function createMyWorkout(sessionToken, name) {
@@ -157,6 +158,10 @@ function createMyWorkout(sessionToken, name) {
 function getMyWorkoutPlan(sessionToken, workoutId) {
   const user = requireUser_(sessionToken);
   assertWorkoutOwner_(user.id, workoutId);
+  return loadWorkoutPlan_(workoutId);
+}
+
+function loadWorkoutPlan_(workoutId) {
   const sheet = appSheet_(APP_SHEETS.EXERCISES);
   const values = sheet.getLastRow() < 2 ? [] : sheet.getRange(2, 1, sheet.getLastRow() - 1, 13).getValues();
   const plan = Array.from({ length: WORKOUT_SHEET.DAY_COUNT }, () => []);
